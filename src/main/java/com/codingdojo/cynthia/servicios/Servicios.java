@@ -1,5 +1,7 @@
 package com.codingdojo.cynthia.servicios;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,6 +81,14 @@ public class Servicios {
 	
 	public Usuario encontrarUsuario(Long id) {
 		return ru.findById(id).orElse(null);
+	}
+	
+	public List<Evento> eventosEnMiEstado(String estado) {
+		return re.findByEstado(estado);
+	}
+	
+	public List<Evento> eventosOtroEstado(String estado) {
+		return re.findByEstadoIsNot(estado);
 	}
 	
 }
