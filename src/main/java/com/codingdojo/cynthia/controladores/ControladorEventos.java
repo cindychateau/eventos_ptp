@@ -131,7 +131,7 @@ public class ControladorEventos {
 		/*====== REVISAMOS SESION ======*/
 		
 		Evento evento = servicios.encontrarEvento(eventoId);
-		model.addAttribute("evento", evento);
+		model.addAttribute("evento", evento); //Variable
 		
 		return "evento.jsp";
 		
@@ -150,15 +150,11 @@ public class ControladorEventos {
 		/*====== REVISAMOS SESION ======*/
 		
 		if(result.hasErrors()) {
-			//Si hay error, tenemos que enviar de nuevo el evento
-			//¿cómo se el evento? mi mensaje ya está enlazado a un atributo 
-			//evento (gracias al hidden que hicimos)
 			model.addAttribute("evento", mensaje.getEvento());
 			return "evento.jsp";
 		} else {
 			servicios.guardarMensaje(mensaje);
-			//Regresamos ala misma pantalla, por lo tanto quiero enviar en la url el id del evento
-			//Como recibo objeto mensaje, mi objeto mensaje tiene un evento, obtengo el id de este
+			// localhost:8080/evento/3
 			return "redirect:/evento/"+mensaje.getEvento().getId();
 		}
 	}

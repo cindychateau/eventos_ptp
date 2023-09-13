@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%> 
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +12,7 @@
 <body>
 	<div class="container">
 		<div class="row">
+			<!-- Detalles de Evento -->
 			<div class="col-6">
 				<h1>${evento.nombre}</h1>
 				<p>
@@ -21,15 +22,13 @@
 					<b>Fecha:</b> ${evento.fecha}
 				</p>
 				<p>
-					<b>Ubicación:</b> ${evento.ubicacion}
+					<b>Ubicación:</b> ${evento.ubicacion}, ${evento.estado}
 				</p>
 				<p>
-					<b>Estado:</b> ${evento.estado}
+					<b>Cantidad Asistentes:</b> ${evento.asistentes.size()}
+					<!-- size() = tamaño total de mi lista -->
 				</p>
-				<p>
-					<b>Cantidad de Asistentes:</b> ${evento.asistentes.size()} <!-- .size() me regresa el tamaño de una lista -->
-				</p>
-				<table class="table table-striped">
+				<table class="table table-striped mt-3">
 					<thead>
 						<tr>
 							<th>Nombre</th>
@@ -37,36 +36,32 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${evento.asistentes}" var="usuario">
+						<c:forEach items="${evento.asistentes}" var="asistente">
 							<tr>
-								<td>${usuario.nombre}</td>
-								<td>${usuario.ubicacion}</td>
+								<td>${asistente.nombre}</td>
+								<td>${asistente.ubicacion}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
 			</div>
+			<!-- Muro de mensajes y Form:form -->
 			<div class="col-6">
 				<h2>Muro de Mensajes</h2>
-				<div>
-					<!-- Recorremos todos los mensajes que publicaron al evento -->
-					<c:forEach items="${evento.mensajesEvento}" var="mensaje">
+				<div class="mb-3 border">
+					<c:forEach items="${evento.mensajesEvento}" var="msg">
 						<p>
-							${mensaje.autor.nombre} dice: ${mensaje.contenido}
+							${msg.autor.nombre} dice: ${msg.contenido}
 						</p>
 					</c:forEach>
 				</div>
+				
 				<form:form action="/crearmensaje" method="post" modelAttribute="mensaje">
-					<div class="form-group">
-						<form:label path="contenido">Agregar Comentario:</form:label>
-						<form:textarea path="contenido" class="form-control" />
-						<form:errors path="contenido" class="text-danger" />
-						<!-- Enviamos el id del usuario en sesión -->
-						<form:hidden path="autor" value="${usuarioEnSesion.id}" />
-						<!-- Enviamos el id del evento -->
-						<form:hidden path="evento" value="${evento.id}"/>
-						<input type="submit" class="btn btn-primary mt-3" value="Enviar" />
-					</div>
+					<form:label path="contenido">Agregar Comentario:</form:label>
+					<form:textarea path="contenido" class="form-control"></form:textarea>
+					<form:hidden path="autor" value="${usuarioEnSesion.id}" />
+					<form:hidden path="evento" value="${evento.id}" />
+					<input type="submit" class="btn btn-primary mt-3" value="Enviar" />
 				</form:form>
 			</div>
 		</div>
