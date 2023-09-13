@@ -31,12 +31,35 @@
 				<tbody>
 					<c:forEach items="${eventosMiEstado}" var="evento">
 						<tr>
-							<td>${evento.nombre}</td>
+							<td><a href="/evento/${evento.id}">${evento.nombre}</a></td>
 							<td>${evento.fecha}</td>
 							<td>${evento.ubicacion}</td>
 							<td>${evento.estado}</td>
 							<td>${evento.host.nombre}</td>
-							<td></td>
+							<td>
+								<!-- Botones de editar y borrar si son mis eventos -->
+								<c:if test="${evento.host.id == usuario.id}">
+									<a href="/editar/${evento.id}" class="btn btn-warning">Editar</a>
+									<form action="/borrar/${evento.id}" method="post">
+										<input type="hidden" name="_method" value="DELETE" />
+										<input type="submit" value="Borrar" class="btn btn-danger" />
+									</form>
+								</c:if>
+								
+								<!-- Botones para unirme al eventos -->
+								<c:if test="${evento.host.id != usuario.id}">
+									<c:choose>
+										<c:when test="${evento.asistentes.contains(usuario)}">
+											<div>Voy a ir al evento - </div>
+											<a href="/quitar/${evento.id}" class="btn btn-danger">Cancelar asistencia</a>
+										</c:when>
+										<c:otherwise>
+											<a href="/unir/${evento.id}" class="btn btn-primary">Asistir al evento</a>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+								
+							</td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -58,12 +81,34 @@
 				<tbody>
 					<c:forEach items="${eventosOtroEstado}" var="evento">
 						<tr>
-							<td>${evento.nombre}</td>
+							<td><a href="/evento/${evento.id}">${evento.nombre}</a></td>
 							<td>${evento.fecha}</td>
 							<td>${evento.ubicacion}</td>
 							<td>${evento.estado}</td>
 							<td>${evento.host.nombre}</td>
-							<td></td>
+							<td>
+								<!-- Botones de editar y borrar si son mis eventos -->
+								<c:if test="${evento.host.id == usuario.id}">
+									<a href="/editar/${evento.id}" class="btn btn-warning">Editar</a>
+									<form action="/borrar/${evento.id}" method="post">
+										<input type="hidden" name="_method" value="DELETE" />
+										<input type="submit" value="Borrar" class="btn btn-danger" />
+									</form>
+								</c:if>
+								
+								<!-- Botones para unirme al eventos -->
+								<c:if test="${evento.host.id != usuario.id}">
+									<c:choose>
+										<c:when test="${evento.asistentes.contains(usuario)}">
+											<div>Voy a ir al evento - </div>
+											<a href="/quitar/${evento.id}" class="btn btn-danger">Cancelar asistencia</a>
+										</c:when>
+										<c:otherwise>
+											<a href="/unir/${evento.id}" class="btn btn-primary">Asistir al evento</a>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -96,6 +141,7 @@
 					</form:select>
 				</div>
 				<form:hidden value="${usuarioEnSesion.id}" path="host" />
+				<!--TODOS LOS ERRORES: <form:errors path="*" class="text-danger" />  -->
 				<input type="submit" value="Crear Evento" class="btn btn-success" />
 			</form:form>
 		</div>

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import com.codingdojo.cynthia.modelos.Evento;
+import com.codingdojo.cynthia.modelos.Mensaje;
 import com.codingdojo.cynthia.modelos.Usuario;
 import com.codingdojo.cynthia.repositorios.RepositorioEventos;
 import com.codingdojo.cynthia.repositorios.RepositorioMensajes;
@@ -91,4 +92,32 @@ public class Servicios {
 		return re.findByEstadoIsNot(estado);
 	}
 	
+	public Evento encontrarEvento(Long id) {
+		return re.findById(id).orElse(null);
+	}
+	
+	public void unirEvento(Long usuarioId, Long eventoId) {
+		Usuario miUsuario = encontrarUsuario(usuarioId);
+		Evento miEvento = encontrarEvento(eventoId);
+		
+		miUsuario.getEventosAsistidos().add(miEvento);
+		ru.save(miUsuario);
+		
+		/*
+		 * miEvento.getAsistentes().add(miUsuario);
+		 * re.save(miEvento);
+		 */
+	}
+	
+	public void quitarEvento(Long usuarioId, Long eventoId) {
+		Usuario miUsuario = encontrarUsuario(usuarioId);
+		Evento miEvento = encontrarEvento(eventoId);
+		
+		miUsuario.getEventosAsistidos().remove(miEvento);
+		ru.save(miUsuario);
+	}
+	
+	public Mensaje guardarMensaje(Mensaje nuevoMensaje) {
+		return rm.save(nuevoMensaje);
+	}
 }

@@ -8,10 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.codingdojo.cynthia.modelos.Estado;
 import com.codingdojo.cynthia.modelos.Evento;
+import com.codingdojo.cynthia.modelos.Mensaje;
 import com.codingdojo.cynthia.modelos.Usuario;
 import com.codingdojo.cynthia.servicios.Servicios;
 
@@ -87,4 +89,78 @@ public class ControladorEventos {
 		}
 	
 	}
+	
+	@GetMapping("/unir/{id}")
+	public String unir(@PathVariable("id") Long eventoId,
+					   HttpSession session) {
+		/*====== REVISAMOS SESION ======*/
+		Usuario usuarioTemporal = (Usuario)session.getAttribute("usuarioEnSesion");
+		if(usuarioTemporal == null) {
+			return "redirect:/";
+		}
+		/*====== REVISAMOS SESION ======*/
+		
+		servicios.unirEvento(usuarioTemporal.getId(), eventoId);
+		return "redirect:/dashboard";
+	}
+	
+	@GetMapping("/quitar/{id}")
+	public String quitar(@PathVariable("id") Long eventoId,
+						 HttpSession session) {
+		/*====== REVISAMOS SESION ======*/
+		Usuario usuarioTemporal = (Usuario)session.getAttribute("usuarioEnSesion");
+		if(usuarioTemporal == null) {
+			return "redirect:/";
+		}
+		/*====== REVISAMOS SESION ======*/
+		
+		servicios.quitarEvento(usuarioTemporal.getId(), eventoId);
+		return "redirect:/dashboard";
+	}
+	
+	@GetMapping("/evento/{id}")
+	public String evento(@PathVariable("id") Long eventoId,
+						 HttpSession session,
+						 Model model,
+						 @ModelAttribute("mensaje") Mensaje mensaje) {
+		/*====== REVISAMOS SESION ======*/
+		Usuario usuarioTemporal = (Usuario)session.getAttribute("usuarioEnSesion");
+		if(usuarioTemporal == null) {
+			return "redirect:/";
+		}
+		/*====== REVISAMOS SESION ======*/
+		
+		Evento evento = servicios.encontrarEvento(eventoId);
+		model.addAttribute("evento", evento);
+		
+		return "evento.jsp";
+		
+	}
+	
+	@PostMapping("/crearmensaje")
+	public String crearmensaje(@Valid @ModelAttribute("mensaje") Mensaje mensaje,
+							   BindingResult result,
+							   HttpSession session,
+							   Model model) {
+		/*====== REVISAMOS SESION ======*/
+		Usuario usuarioTemporal = (Usuario)session.getAttribute("usuarioEnSesion");
+		if(usuarioTemporal == null) {
+			return "redirect:/";
+		}
+		/*====== REVISAMOS SESION ======*/
+		
+		if(result.hasErrors()) {
+			//Si hay error, tenemos que enviar de nuevo el evento
+			//¿cómo se el evento? mi mensaje ya está enlazado a un atributo 
+			//evento (gracias al hidden que hicimos)
+			model.addAttribute("evento", mensaje.getEvento());
+			return "evento.jsp";
+		} else {
+			servicios.guardarMensaje(mensaje);
+			//Regresamos ala misma pantalla, por lo tanto quiero enviar en la url el id del evento
+			//Como recibo objeto mensaje, mi objeto mensaje tiene un evento, obtengo el id de este
+			return "redirect:/evento/"+mensaje.getEvento().getId();
+		}
+	}
+	
 }
